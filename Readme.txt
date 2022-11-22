@@ -4,7 +4,6 @@ This API provides an interface for searching the closest matches of addresses. A
 
 
 
-
 API Terms of Service
 
 Please refer to our service terms at https://glasp.eu/terms-of-service.
