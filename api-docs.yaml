@@ -1,0 +1,262 @@
+openapi: 3.0.1
+info:
+  title: GLASP REST API
+  description: GLASP's REST API
+  termsOfService: https:/glasp.eu/terms-of-service
+  contact:
+    name: Support
+    url: www.glasp.eu
+    email: glasp.info@gmail.com
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+  version: v1.00
+servers:
+- url: https://www.glasp-api.eu
+paths:
+  /auth/token/access:
+    post:
+      tags:
+      - Access Token
+      summary: Requesting the webservice access token with the user credentials.
+      operationId: accessToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+        required: true
+      responses:
+        "200":
+          description: The token which shall be used for the searching requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        "500":
+          description: Internal Server Error
+  /auth/token/revoke:
+    get:
+      tags:
+      - Access Token
+      summary: Requesting the revocation of the webservice access token.
+      operationId: revokeToken
+      responses:
+        "200":
+          description: The confirmation that the token was revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        "500":
+          description: Internal Server Error
+      security:
+      - bearerAuth: []
+  /app/search/zipstreetcity:
+    post:
+      tags:
+      - Address Search
+      summary: "Search request when the zip code, the street and the city are known."
+      operationId: searchZipStreetCity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZipStreetCityRequest'
+        required: true
+      responses:
+        "400":
+          description: "Error in the provided data, please check the response message\
+            \ for details."
+        "200":
+          description: The search results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        "404":
+          description: There is no address matching the ZipStreet.
+        "500":
+          description: Internal Server Error.
+      security:
+      - bearerAuth: []
+  /app/search/zipstreet:
+    post:
+      tags:
+      - Address Search
+      summary: Search request when the zip code and the street are known.
+      operationId: searchZipStreet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZipStreetRequest'
+        required: true
+      responses:
+        "400":
+          description: "Error in the provided data, please check the response message\
+            \ for details."
+        "200":
+          description: The search results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        "404":
+          description: There is no address matching the ZipStreet.
+        "500":
+          description: Internal Server Error.
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    TokenRequest:
+      type: object
+      properties:
+        userName:
+          type: string
+          description: Your specific user name which you can see in your account at
+            www.glasp.eu.
+          example: 54321-54321-54321-54321-54321
+        userPassword:
+          type: string
+          description: Your specific user password which you can see in your account
+            at www.glasp.eu.
+          example: pafd342k1afd3429
+      description: Users can sign up at www.glasp.eu to receive access credentials.
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: The token which you can use to call the rest API.
+          example: 4d3s0faf93d40faa8ck
+        expiresIn:
+          type: string
+          description: The time in seconds which remains until the access token becomes
+            invalid (initially 2 days).
+          example: "172800"
+    ZipStreetCityRequest:
+      type: object
+      properties:
+        zip:
+          maxLength: 8
+          minLength: 1
+          type: string
+          description: The zip code which you would like to search.
+          example: "43032"
+        street:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: The street which you would like to search.
+          example: Strada Cascina
+        city:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: The city which you would like to search.
+          example: Buseto
+        country:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: The country code which has to follow ISO 3166-1 alpha-2 (only
+            allowed value is IT).
+          example: IT
+        maxErrors:
+          maximum: 6
+          minimum: 1
+          type: integer
+          description: The number of allowed errors in the search string.
+          format: int32
+          example: 4
+        noOfResults:
+          maximum: 10
+          minimum: 1
+          type: integer
+          description: The number of possible matches which the response should return.
+          format: int32
+          example: 4
+    Addresses:
+      type: object
+      properties:
+        zip:
+          maxLength: 8
+          minLength: 1
+          type: string
+          description: The zip code of the search result.
+          example: "43032"
+        street:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: The street of the search result.
+          example: Strada Cascina
+        city:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: The city of the search result.
+          example: Busseto
+        country:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: ISO 3166-1 alpha-2 country code (only allowed value is IT).
+          example: IT
+    SearchResult:
+      type: object
+      properties:
+        addressApis:
+          type: array
+          items:
+            $ref: '#/components/schemas/Addresses'
+    ZipStreetRequest:
+      type: object
+      properties:
+        zip:
+          maxLength: 8
+          minLength: 1
+          type: string
+          description: The zip code which you would like to search.
+          example: "43032"
+        street:
+          maxLength: 30
+          minLength: 1
+          type: string
+          description: The street which you would like to search.
+          example: Strada Cascina
+        country:
+          maxLength: 2
+          minLength: 1
+          type: string
+          description: The country code which has to follow ISO 3166-1 alpha-2 (only
+            allowed value is IT).
+          example: IT
+        maxErrors:
+          maximum: 6
+          minimum: 1
+          type: integer
+          description: The number of allowed errors in the search string.
+          format: int32
+          example: 4
+        noOfResults:
+          maximum: 10
+          minimum: 1
+          type: integer
+          description: The number of possible matches which the response should return.
+          format: int32
+          example: 4
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Confirmation that revoking the access token worked.
+          example: The access token was revoked.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
