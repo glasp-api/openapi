@@ -1,6 +1,13 @@
+Overview
+
+This API provides an interface for searching the closest matches of addresses. At the moment, the only supported country is Italy. Please visit our website at www.glasp.eu for more details.
+
+
+
+
 API Terms of Service
 
-Please refer to our service terms at www.glasp.eu/API Terms of Service.
+Please refer to our service terms at https://glasp.eu/terms-of-service.
 
 
 Copyright Credits
