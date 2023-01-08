@@ -27,14 +27,14 @@ paths:
               $ref: '#/components/schemas/TokenRequest'
         required: true
       responses:
+        "500":
+          description: Internal Server Error
         "200":
           description: The token which shall be used for the searching requests.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenResponse'
-        "500":
-          description: Internal Server Error
   /auth/token/revoke:
     get:
       tags:
@@ -65,19 +65,25 @@ paths:
               $ref: '#/components/schemas/ZipStreetCityRequest'
         required: true
       responses:
+        "404":
+          description: There is no address matching the ZipStreet.
+        "500":
+          description: Internal Server Error.
         "400":
           description: "Error in the provided data, please check the response message\
             \ for details."
+        "429":
+          description: Too many requests per minute.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SearchResult'
         "200":
           description: The search results.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchResult'
-        "404":
-          description: There is no address matching the ZipStreet.
-        "500":
-          description: Internal Server Error.
       security:
       - bearerAuth: []
   /app/search/zipstreet:
@@ -93,19 +99,25 @@ paths:
               $ref: '#/components/schemas/ZipStreetRequest'
         required: true
       responses:
+        "404":
+          description: There is no address matching the ZipStreet.
+        "500":
+          description: Internal Server Error.
         "400":
           description: "Error in the provided data, please check the response message\
             \ for details."
+        "429":
+          description: Too many requests per minute.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SearchResult'
         "200":
           description: The search results.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchResult'
-        "404":
-          description: There is no address matching the ZipStreet.
-        "500":
-          description: Internal Server Error.
       security:
       - bearerAuth: []
 components:
